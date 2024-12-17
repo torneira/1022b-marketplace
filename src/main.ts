@@ -19,10 +19,12 @@ import BancoMysql from './db/bancoMysql'
 app.get("/produtos",async(req,res)=>{
     try{
         const banco = new BancoMysql();
-        const result = banco.query()
-        banco.end()
+        const result = await banco.query()
+        console.log(result)
+        await banco.end()
         res.send(result)
     }catch(e){
+        console.log(e)
         res.status(500).send("Erro do servidor")
     }  
 })
