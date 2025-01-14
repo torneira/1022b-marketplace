@@ -32,9 +32,9 @@ app.get("/produtos",async(req,res)=>{
 app.post("/produtos",async(req,res)=>{
     try{
         const {id,nome,descricao,preco,imagem} = req.body
-        
+        console.log(id,nome,descricao,preco,imagem)
         const banco = new BancoMysql();
-        
+
         const sqlString  = "INSERT INTO produtos VALUES (?,?,?,?,?)"
         const parametros = [id,nome,descricao,preco,imagem]
 
@@ -50,13 +50,38 @@ app.post("/produtos",async(req,res)=>{
     }  
 })
 
-app.delete("/produtos/:id",(req,res)=>{
+app.delete("/produtos/:id",async (req,res)=>{
     console.log("Tentando excluir o produto de id:",req.params.id)
-    res.send("Tentando excluir o produto de id:"+req.params.id)
+    try{
+        const sqlQuery = "DELETE FROM produtos WHERE id = ?"
+        const parametro = [req.params.id]
+
+        const banco = new BancoMysql();
+
+        const result = await banco.query(sqlQuery,parametro)
+
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }
 })
-app.put("/produtos/:id",(req,res)=>{
+app.put("/produtos/:id",async (req,res)=>{
     console.log("Tentando alterar o produto de id:",req.params.id)
-    res.send("Tentando alterar o produto de id:"+req.params.id)
+    try{
+        const {nome,descricao,preco,imagem} = req.body
+        const sqlQuery = "UPDATE produtos SET nome=?,descricao=?,preco=?,imagem=? WHERE id = ?"
+        const parametro = [nome,descricao,preco,imagem,req.params.id]
+
+        const banco = new BancoMysql();
+
+        const result = await banco.query(sqlQuery,parametro)
+
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }
 })
 
 
