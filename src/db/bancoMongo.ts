@@ -23,10 +23,26 @@ class BancoMongo{
         const conn = await this.client.connect(); 
         await conn.close();
     }
-    async listar(){}
-    async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){}
-    async excluir(id:string){}
-    async alterar(id:string,produto:{id?:string,nome:string,descricao:string,preco:string,imagem:string}){}
+    async listar(){
+        const conn = await this.getConnection()
+        const result = await conn.collection("produtos").find().toArray()
+        return result
+    }
+    async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){
+        const conn = await this.getConnection()
+        const result = await conn.collection("produtos").insertOne(produto)
+        return result
+    }
+    async excluir(id:string){
+        const conn = await this.getConnection()
+        const result = await conn.collection("produtos").deleteOne({id})
+        return result
+    }
+    async alterar(id:string,produto:{id?:string,nome:string,descricao:string,preco:string,imagem:string}){
+        const conn = await this.getConnection()
+        const result = await conn.collection("produtos").updateOne({id},{$set:produto})
+        return result
+    }
 
 }
 
