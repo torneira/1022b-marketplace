@@ -30,6 +30,9 @@ class BancoMysql {
         const [result, fields] = await conn.query("SELECT * from produtos");
         return result
     }
+    async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){}
+    async excluir(id:string){}
+    async alterar(id:string,produto:{id?:string,nome:string,descricao:string,preco:string,imagem:string}){}
 }
 
 export default BancoMysql;

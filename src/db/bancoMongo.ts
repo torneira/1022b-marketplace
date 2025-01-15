@@ -23,6 +23,11 @@ class BancoMongo{
         const conn = await this.client.connect(); 
         await conn.close();
     }
+    async listar(){}
+    async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){}
+    async excluir(id:string){}
+    async alterar(id:string,produto:{id?:string,nome:string,descricao:string,preco:string,imagem:string}){}
+
 }
 
 export default BancoMongo
