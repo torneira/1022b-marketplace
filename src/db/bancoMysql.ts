@@ -15,15 +15,20 @@ class BancoMysql {
         });
     }
 
-    async query(queryString:string,params?:Array<any>) {
+    async getConnection() {
         const conn = await this.conexao; 
-        const [result, fields] = await conn.query(queryString,params);
-        return result;
+        return conn;
     }
 
     async end() {
         const conn = await this.conexao; 
         await conn.end();
+    }
+
+    async listar(){
+        const conn = await this.getConnection()
+        const [result, fields] = await conn.query("SELECT * from produtos");
+        return result
     }
 }
 
