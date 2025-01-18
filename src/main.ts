@@ -15,32 +15,34 @@ app.use(cors())
 //ROTAS
 
 import BancoMysql from './db/bancoMysql'
+import BancoMongo from './db/bancoMongo'
 
 app.get("/produtos",async(req,res)=>{
     try{
-        const banco = new BancoMysql();
-        const result = banco.query()
-        banco.end()
+        const banco = new BancoMongo();
+        const result = await banco.listar()
+        console.log(result)
+        await banco.end()
         res.send(result)
     }catch(e){
+        console.log(e)
         res.status(500).send("Erro do servidor")
     }  
 })
 
 app.post("/produtos",async(req,res)=>{
     try{
-        const conexao = await mysql.createConnection({
-            host: process.env.dbhost?process.env.dbhost:"localhost",
-            user:process.env.dbuser?process.env.dbuser:"root",
-            password:process.env.dbpassword?process.env.dbpassword:"",
-            database:process.env.dbname?process.env.dbname:"banco1022b",
-            port:process.env.dbport?parseInt(process.env.dbport):3306
-        })
         const {id,nome,descricao,preco,imagem} = req.body
-        const [result,fields]  = 
-            await conexao.query("INSERT INTO produtos VALUES (?,?,?,?,?)",
-                [id,nome,descricao,preco,imagem])
-        await conexao.end()
+        console.log(id,nome,descricao,preco,imagem)
+        const banco = new BancoMongo();
+
+        const produto = {id,nome,descricao,preco,imagem}
+
+        const result = await banco.inserir(produto)
+        console.log(result)
+        
+        await banco.end()
+        
         res.status(200).send(result)
     }catch(e){
         console.log(e)
@@ -48,6 +50,39 @@ app.post("/produtos",async(req,res)=>{
     }  
 })
 
+app.delete("/produtos/:id",async (req,res)=>{
+    console.log("Tentando excluir o produto de id:",req.params.id)
+    try{
+        const sqlQuery = "DELETE FROM produtos WHERE id = ?"
+        const parametro = [req.params.id]
+
+        const banco = new BancoMongo();
+
+        const result = await banco.excluir(req.params.id)
+
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }
+})
+app.put("/produtos/:id",async (req,res)=>{
+    console.log("Tentando alterar o produto de id:",req.params.id)
+    try{
+        const {nome,descricao,preco,imagem} = req.body
+        //const sqlQuery = "UPDATE produtos SET nome=?,descricao=?,preco=?,imagem=? WHERE id = ?"
+        const produto = {nome,descricao,preco,imagem}
+
+        const banco = new BancoMongo();
+
+        const result = await banco.alterar(req.params.id,produto)
+
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }
+})
 
 
 
